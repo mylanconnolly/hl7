@@ -11,16 +11,16 @@ func TestNewMessage(t *testing.T) {
 	tests := []struct {
 		name    string
 		data    []byte
-		want    Message
+		want    *Message
 		wantErr bool
 	}{
-		{"Empty (nil)", []byte(nil), Message{}, true},
-		{"Empty (not nil)", []byte{}, Message{}, true},
-		{"Too short", []byte(`MSH|^~\`), Message{}, true},
+		{"Empty (nil)", []byte(nil), nil, true},
+		{"Empty (not nil)", []byte{}, nil, true},
+		{"Too short", []byte(`MSH|^~\`), nil, true},
 		{
 			"Minimal example",
 			[]byte(`MSH|^~\&`),
-			Message{
+			&Message{
 				reader:     bufio.NewReader(bytes.NewBuffer([]byte(`MSH|^~\&`))),
 				fieldSep:   '|',
 				compSep:    '^',
@@ -33,7 +33,7 @@ func TestNewMessage(t *testing.T) {
 		{
 			"Custom separators",
 			[]byte("MSH....."),
-			Message{
+			&Message{
 				reader:     bufio.NewReader(bytes.NewBuffer([]byte("MSH....."))),
 				fieldSep:   '.',
 				compSep:    '.',

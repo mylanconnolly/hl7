@@ -28,7 +28,7 @@ func NewReader(reader io.Reader) *Reader {
 //
 // If the reader is empty (or at io.EOF), io.EOF is returned with an empty
 // message. Otherwise, error will always be nil.
-func (r Reader) ReadMessage() (Message, error) {
+func (r Reader) ReadMessage() (*Message, error) {
 	var buf []byte
 
 	for {

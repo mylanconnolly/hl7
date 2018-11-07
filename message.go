@@ -4,11 +4,13 @@ import (
 	"bufio"
 	"bytes"
 	"io"
+	"sync"
 )
 
 // Message is used to describe the parsed message.
 type Message struct {
 	reader     *bufio.Reader
+	lock       sync.Mutex
 	fieldSep   byte
 	compSep    byte
 	subCompSep byte
@@ -19,6 +21,8 @@ type Message struct {
 // ReadSegment is used to "read" the next segment from the message.
 func (m *Message) ReadSegment() (Segment, error) {
 	var buf []byte
+
+	m.lock.Lock()
 
 	for {
 		b, err := m.reader.ReadByte()
@@ -31,6 +35,8 @@ func (m *Message) ReadSegment() (Segment, error) {
 		}
 		buf = append(buf, b)
 	}
+	m.lock.Unlock()
+
 	if len(buf) == 0 {
 		return Segment{}, io.EOF
 	}
@@ -38,11 +44,11 @@ func (m *Message) ReadSegment() (Segment, error) {
 }
 
 // NewMessage takes a byte slice and returns a Message that is ready to use.
-func NewMessage(data []byte) (Message, error) {
+func NewMessage(data []byte) (*Message, error) {
 	// The message must have at least 8 bytes in order to catch all of the
 	// character definitions in the header.
 	if len(data) < 8 {
-		return Message{}, io.EOF
+		return nil, io.EOF
 	}
 	reader := bytes.NewBuffer(data)
 
@@ -54,5 +60,5 @@ func NewMessage(data []byte) (Message, error) {
 		escape:     data[6],
 		subCompSep: data[7],
 	}
-	return m, nil
+	return &m, nil
 }
