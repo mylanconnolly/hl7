@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"io"
+	"sync"
 )
 
 // Constants describing possible message boundaries.
@@ -16,6 +17,7 @@ const (
 // Reader is the type used to read messages from an internal bufio.Reader.
 type Reader struct {
 	reader *bufio.Reader
+	lock   sync.Mutex
 }
 
 // NewReader is used to return a new Reader that is ready to use.
@@ -28,8 +30,10 @@ func NewReader(reader io.Reader) *Reader {
 //
 // If the reader is empty (or at io.EOF), io.EOF is returned with an empty
 // message. Otherwise, error will always be nil.
-func (r Reader) ReadMessage() (*Message, error) {
+func (r *Reader) ReadMessage() (*Message, error) {
 	var buf []byte
+
+	r.lock.Lock()
 
 	for {
 		b, err := r.reader.ReadByte()
@@ -43,11 +47,17 @@ func (r Reader) ReadMessage() (*Message, error) {
 			if err != nil {
 				break
 			}
-			if bytes.Equal(p, []byte("MSH|")) || bytes.Equal(p, []byte("\nMSH")) {
+			if bytes.Equal(p, []byte("MSH|")) {
+				break
+			}
+			if bytes.Equal(p, []byte("\nMSH")) {
+				r.reader.ReadByte()
 				break
 			}
 		}
 		buf = append(buf, b)
 	}
+	r.lock.Unlock()
+
 	return NewMessage(buf)
 }
