@@ -15,18 +15,18 @@ var ErrUnknownTimeFormat = errors.New("unknown time format")
 // compliant, since not all fields have sub-components but it is close enough.
 type SubComponent []byte
 
-// GetInt is used to return an integer value housed in a SubComponent.
-func (s SubComponent) GetInt() (int, error) {
+// Int is used to return an integer value housed in a SubComponent.
+func (s SubComponent) Int() (int, error) {
 	return strconv.Atoi(string(s))
 }
 
-// GetString is used to return the string value housed in a SubComponent.
-func (s SubComponent) GetString() string {
+// String is used to return the string value housed in a SubComponent.
+func (s SubComponent) String() string {
 	return string(s)
 }
 
-// GetTime is used to return a date value housed in a SubComponent.
-func (s SubComponent) GetTime() (time.Time, error) {
+// Time is used to return a date value housed in a SubComponent.
+func (s SubComponent) Time() (time.Time, error) {
 	switch len(s) {
 	case 8:
 		return time.Parse("20060102", string(s))

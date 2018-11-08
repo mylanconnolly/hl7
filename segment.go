@@ -3,6 +3,14 @@ package hl7
 // Segment is a slice of fields.
 type Segment []Fields
 
+// Type is used to return the type of segment this is.
+func (s Segment) Type() string {
+	if subComp, ok := s.GetSubComponent(0, 0, 0, 0); ok {
+		return subComp.String()
+	}
+	return ""
+}
+
 // GetFields is used to get the fields at the given index
 func (s Segment) GetFields(idx int) (Fields, bool) {
 	if idx >= len(s) {

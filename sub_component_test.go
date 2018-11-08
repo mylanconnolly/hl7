@@ -28,7 +28,7 @@ func TestNewSubComponent(t *testing.T) {
 	}
 }
 
-func TestGetInt(t *testing.T) {
+func TestSubComponentInt(t *testing.T) {
 	tests := []struct {
 		name    string
 		value   SubComponent
@@ -42,7 +42,7 @@ func TestGetInt(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.value.GetInt()
+			got, err := tt.value.Int()
 
 			if tt.wantErr && err == nil {
 				t.Fatal("Wanted error, got nil")
@@ -57,7 +57,7 @@ func TestGetInt(t *testing.T) {
 	}
 }
 
-func TestGetString(t *testing.T) {
+func TestSubComponentString(t *testing.T) {
 	tests := []struct {
 		name  string
 		value SubComponent
@@ -70,7 +70,7 @@ func TestGetString(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.value.GetString()
+			got := tt.value.String()
 
 			if tt.want != got {
 				t.Fatalf("Want: %s, got: %s", tt.want, got)
@@ -79,7 +79,7 @@ func TestGetString(t *testing.T) {
 	}
 }
 
-func TestGetTime(t *testing.T) {
+func TestSubComponentTime(t *testing.T) {
 	tests := []struct {
 		name    string
 		value   SubComponent
@@ -99,7 +99,7 @@ func TestGetTime(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.value.GetTime()
+			got, err := tt.value.Time()
 
 			if tt.wantErr && err == nil {
 				t.Fatal("Wanted error, got nil")

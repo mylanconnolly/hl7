@@ -5,6 +5,28 @@ import (
 	"testing"
 )
 
+func TestSegmentType(t *testing.T) {
+	tests := []struct {
+		name    string
+		segment Segment
+		want    string
+	}{
+		{"empty (nil)", Segment(nil), ""},
+		{"empty (not nil)", Segment{}, ""},
+		{"one part", Segment{{{{SubComponent("foo")}}}}, "foo"},
+		{"two parts", Segment{{{{SubComponent("foo")}}}, {{{SubComponent("bar")}}}}, "foo"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.segment.Type()
+
+			if tt.want != got {
+				t.Fatalf("Got: %#v, want: %#v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestNewSegment(t *testing.T) {
 	tests := []struct {
 		name       string
