@@ -41,6 +41,12 @@ func (r *Reader) ReadMessage() (*Message, error) {
 		if err == io.EOF {
 			break
 		}
+		// Skip all characters that don't look like they're the beginning of a
+		// message until we start storing bytes in the byte slice. This helps us
+		// cope with files that have leading whitespace for whatever reason.
+		if len(buf) == 0 && b != 'M' {
+			continue
+		}
 		if b == CR || b == FF || b == LF {
 			p, err := r.reader.Peek(4)
 

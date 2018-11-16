@@ -30,6 +30,12 @@ func (m *Message) ReadSegment() (Segment, error) {
 		if err == io.EOF {
 			break
 		}
+		// Skip all line feeds and character returns while we haven't started saving
+		// bytes to the byte slice. This helps cope with messages that have a lot of
+		// extra whitespace in them.
+		if len(buf) == 0 && (b == CR || b == LF) {
+			continue
+		}
 		if b == CR || b == LF {
 			break
 		}
