@@ -30,7 +30,7 @@ func (m *Message) ReadSegment() (Segment, error) {
 		if err == io.EOF {
 			break
 		}
-		if b == CR {
+		if b == CR || b == LF {
 			break
 		}
 		buf = append(buf, b)

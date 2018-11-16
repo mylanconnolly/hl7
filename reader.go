@@ -41,7 +41,7 @@ func (r *Reader) ReadMessage() (*Message, error) {
 		if err == io.EOF {
 			break
 		}
-		if b == CR || b == FF {
+		if b == CR || b == FF || b == LF {
 			p, err := r.reader.Peek(4)
 
 			if err != nil {
