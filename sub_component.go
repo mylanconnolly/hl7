@@ -20,8 +20,15 @@ func (s SubComponent) Int() (int, error) {
 	return strconv.Atoi(string(s))
 }
 
-// String is used to return the string value housed in a SubComponent.
+// String is used to return the string value housed in a SubComponent. We
+// convert HL7 escape codes, linebreaks, etc. into standard values.
 func (s SubComponent) String() string {
+	// TODO: Implement format-parsing, unescaping, etc.
+	return string(s)
+}
+
+// DirtyString is the string value value without any escaping performed.
+func (s SubComponent) DirtyString() string {
 	return string(s)
 }
 

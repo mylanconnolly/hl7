@@ -57,7 +57,7 @@ func TestSubComponentInt(t *testing.T) {
 	}
 }
 
-func TestSubComponentString(t *testing.T) {
+func TestSubComponentDirtyString(t *testing.T) {
 	tests := []struct {
 		name  string
 		value SubComponent
@@ -70,7 +70,7 @@ func TestSubComponentString(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.value.String()
+			got := tt.value.DirtyString()
 
 			if tt.want != got {
 				t.Fatalf("Want: %s, got: %s", tt.want, got)

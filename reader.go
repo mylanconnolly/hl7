@@ -57,7 +57,7 @@ func (r *Reader) ReadMessage() (*Message, error) {
 				break
 			}
 			if bytes.Equal(p, []byte("\nMSH")) {
-				r.reader.ReadByte()
+				r.reader.ReadByte() // Get rid of the LF
 				break
 			}
 		}
