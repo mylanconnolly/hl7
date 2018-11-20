@@ -3,6 +3,7 @@ package hl7
 import (
 	"errors"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -23,8 +24,25 @@ func (s SubComponent) Int() (int, error) {
 // String is used to return the string value housed in a SubComponent. We
 // convert HL7 escape codes, linebreaks, etc. into standard values.
 func (s SubComponent) String() string {
-	// TODO: Implement format-parsing, unescaping, etc.
-	return string(s)
+	out := strings.NewReplacer(
+		`\H\`, "",
+		`\N\`, "",
+		`\.fi\`, "",
+		`\.nf\`, "",
+		`\F\`, "|",
+		`\S\`, "^",
+		`\T\`, "&",
+		`\R\`, "~",
+		`\E\`, `\`,
+		`\.br\`, "\n",
+		`\.ce\`, "\n",
+	).Replace(string(s))
+
+	// TODO: Implement replacers for .sp, .in, .ti, and .sk. See
+	// https://www.hermetechnz.com/documentation/UltraPort/MSSQL/index.html?hl7_escape_rules.htm
+	// for details. Should we use regex? Or a parser?
+
+	return out
 }
 
 // DirtyString is the string value value without any escaping performed.
