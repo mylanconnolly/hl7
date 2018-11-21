@@ -3,6 +3,19 @@ package hl7
 // Field is a slice of components.
 type Field []Component
 
+// MarshalHL7 is used to convert the field back into HL7 format.
+func (f Field) MarshalHL7() []byte {
+	buf := []byte{}
+
+	for i, c := range f {
+		if i > 0 {
+			buf = append(buf, compSep)
+		}
+		buf = append(buf, c.MarshalHL7()...)
+	}
+	return buf
+}
+
 // GetComponent is used to get the component at the given index.
 func (f Field) GetComponent(idx int) (Component, bool) {
 	if idx >= len(f) {

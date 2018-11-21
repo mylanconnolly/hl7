@@ -16,6 +16,11 @@ var ErrUnknownTimeFormat = errors.New("unknown time format")
 // compliant, since not all fields have sub-components but it is close enough.
 type SubComponent []byte
 
+// MarshalHL7 is used to conver the SubComponent back into an HL7 format.
+func (s SubComponent) MarshalHL7() []byte {
+	return s
+}
+
 // Int is used to return an integer value housed in a SubComponent.
 func (s SubComponent) Int() (int, error) {
 	return strconv.Atoi(string(s))

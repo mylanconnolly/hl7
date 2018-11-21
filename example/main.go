@@ -35,15 +35,13 @@ func main() {
 		if err != nil {
 			break
 		}
-		fmt.Println("Reading message #", i)
-
 		for {
-			segment, err := msg.ReadSegment()
+			_, err = msg.ReadSegment()
 
 			if err != nil {
 				break
 			}
-			fmt.Println("Found segment", segment.Type())
+			fmt.Println("Found segment!")
 		}
 	}
 }
