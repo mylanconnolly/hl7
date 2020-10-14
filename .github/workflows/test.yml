@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - "**/*.go"
       - ".github/workflows/test.yml"
