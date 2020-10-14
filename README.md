@@ -20,7 +20,10 @@ help with large messages, particularly when you find out halfway through the
 message that you don't care about it anymore (maybe it doesn't have anything
 to do with your business case).
 
-For example usage, see the [example program](example/main.go).
+For example usage, see the [example program](example/main.go). There is an
+example file with HL7 data in it gathered from
+[Wikipedia](https://en.wikipedia.org/wiki/Health_Level_7) and
+[Ringholm bv](http://www.ringholm.com/docs/04300_en.htm).
 
 Further usage information can be found
 [here](https://pkg.go.dev/github.com/mylanconnolly/hl7).

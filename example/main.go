@@ -1,5 +1,13 @@
 package main
 
+// This example program accepts a single flag (-file) with an argument of the
+// filename. It then opens that file and parses all of the HL7 messages within
+// it. There can be one or multiple messages per file.
+//
+// Note that the functionality of the library allows you to use any io.Reader
+// when building an hl7.Reader, so this could just as easily be a TCP connection
+// or bytes.Buffer or something else (the tests use bytes.Buffers).
+
 import (
 	"flag"
 	"fmt"
