@@ -61,11 +61,6 @@ func (r *Reader) readMessage() (*Message, error) {
 		b, err := r.reader.ReadByte()
 
 		if err == io.EOF {
-			// Nothing was read before we reached io.EOF, so don't even worry about
-			// parsing anything.
-			if len(buf) == 0 {
-				return nil, err
-			}
 			break
 		} else if err != nil {
 			return nil, err
@@ -80,26 +75,26 @@ func (r *Reader) readMessage() (*Message, error) {
 		// attempts to find all of the different ways I have encountered personally
 		// so far.
 		if b == CR || b == FF || b == LF || b == NB {
+			// "Peek" ahead to the next four bytes. The difference between this and
+			// reading is that the four bytes will still be in the buffer after we
+			// peek, whereas reading consumes them. This allows us to look ahead at
+			// what is coming up, which we will use to see if a message is coming up.
 			p, err := r.reader.Peek(4)
 
-			if err != nil {
+			if err == io.EOF {
 				break
+			} else if err != nil {
+				return nil, err
 			}
-			if bytes.Equal(p, []byte("MSH|")) {
-				break
-			}
-			// If the file is Windows-encoded, it's possible that the messages are
-			// separated with a CRLF. In that case, we'll want to check for this
-			// instead, since we only read the CR (and the LF will still be there).
-			if bytes.Equal(p, []byte("\nMSH")) {
-				// Get rid of the LF
-				if _, err = r.reader.ReadByte(); err != nil {
-					return nil, err
-				}
+			if bytes.Equal(p, []byte("MSH|")) || bytes.Equal(p, []byte("\nMSH")) {
 				break
 			}
 		}
 		buf = append(buf, b)
+	}
+
+	if len(buf) == 0 {
+		return nil, io.EOF
 	}
 
 	return NewMessage(buf)
