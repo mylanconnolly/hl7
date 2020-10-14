@@ -27,8 +27,10 @@ func main() {
 
 	reader := hl7.NewReader(file)
 
-	reader.EachMessage(func(msg *hl7.Message) error {
+	if err = reader.EachMessage(func(msg *hl7.Message) error {
 		fmt.Println("Found a message!")
 		return nil
-	})
+	}); err != nil {
+		fmt.Fprintln(os.Stderr, "Error encountered:", err)
+	}
 }
