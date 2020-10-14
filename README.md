@@ -8,6 +8,17 @@ only the standard library is used.
 This parser accepts an `io.Reader` as the input, so anything that follows that
 interface should be usable here.
 
+This library is tested to work on the following platforms:
+
+- Go versions 1.15.x and 1.14.x
+- Latest version of macOS
+- Latest version of Windows
+- Latest version of Ubuntu
+
+It should probably work without issue in older versions of Go and operating
+systems since we are not utilizing any low-level features or anything
+particularly modern in Go.
+
 ## Installation
 
 Installation is simple:
