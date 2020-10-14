@@ -12,6 +12,7 @@ const (
 	CR = '\r'
 	LF = '\n'
 	FF = '\f'
+	NB = '\x00'
 )
 
 // Reader is the type used to read messages from an internal bufio.Reader.
@@ -53,19 +54,18 @@ func (r *Reader) EachMessage(fn MessageFunc) error {
 	}
 }
 
-// ReadMessage is used to read the next message in the internal reader.
-//
-// If the reader is empty (or at io.EOF), io.EOF is returned with an empty
-// message. Otherwise, error will always be nil.
-func (r *Reader) ReadMessage() (*Message, error) {
+func (r *Reader) readMessage() (*Message, error) {
 	var buf []byte
-
-	r.lock.Lock()
 
 	for {
 		b, err := r.reader.ReadByte()
 
 		if err == io.EOF {
+			// Nothing was read before we reached io.EOF, so don't even worry about
+			// parsing anything.
+			if len(buf) == 0 {
+				return nil, err
+			}
 			break
 		} else if err != nil {
 			return nil, err
@@ -76,7 +76,10 @@ func (r *Reader) ReadMessage() (*Message, error) {
 		if len(buf) == 0 && b != 'M' {
 			continue
 		}
-		if b == CR || b == FF || b == LF {
+		// Multiple messages within a file can be delimited a variety of ways. This
+		// attempts to find all of the different ways I have encountered personally
+		// so far.
+		if b == CR || b == FF || b == LF || b == NB {
 			p, err := r.reader.Peek(4)
 
 			if err != nil {
@@ -85,6 +88,9 @@ func (r *Reader) ReadMessage() (*Message, error) {
 			if bytes.Equal(p, []byte("MSH|")) {
 				break
 			}
+			// If the file is Windows-encoded, it's possible that the messages are
+			// separated with a CRLF. In that case, we'll want to check for this
+			// instead, since we only read the CR (and the LF will still be there).
 			if bytes.Equal(p, []byte("\nMSH")) {
 				// Get rid of the LF
 				if _, err = r.reader.ReadByte(); err != nil {
@@ -95,7 +101,17 @@ func (r *Reader) ReadMessage() (*Message, error) {
 		}
 		buf = append(buf, b)
 	}
-	r.lock.Unlock()
 
 	return NewMessage(buf)
+}
+
+// ReadMessage is used to read the next message in the internal reader.
+//
+// If the reader is empty (or at io.EOF), io.EOF is returned with an empty
+// message. Otherwise, error will always be nil.
+func (r *Reader) ReadMessage() (*Message, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	return r.readMessage()
 }

@@ -1,6 +1,10 @@
 # HL7
 
-This is a basic HL7 parser written in Go.
+This is a basic HL7 parser written in Go. There are no external dependencies,
+only the standard library is used.
+
+This parser accepts an `io.Reader` as the input, so anything that follows that
+interface should be usable here.
 
 ## Installation
 
