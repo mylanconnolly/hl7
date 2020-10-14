@@ -3,19 +3,6 @@ package hl7
 // Fields is a slice of fields
 type Fields []Field
 
-// MarshalHL7 is used to convert the field back into HL7 format.
-func (f Fields) MarshalHL7() []byte {
-	buf := []byte{}
-
-	for i, ff := range f {
-		if i > 0 {
-			buf = append(buf, repeat)
-		}
-		buf = append(buf, ff.MarshalHL7()...)
-	}
-	return buf
-}
-
 // GetField is used to get the field at the given index.
 func (f Fields) GetField(idx int) (Field, bool) {
 	if idx >= len(f) {

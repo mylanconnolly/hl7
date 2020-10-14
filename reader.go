@@ -26,6 +26,21 @@ func NewReader(reader io.Reader) *Reader {
 	return &Reader{reader: r}
 }
 
+type MessageFunc func(msg *Message) error
+
+func (r *Reader) EachMessage(fn MessageFunc) error {
+	for {
+		msg, err := r.ReadMessage()
+
+		if err != nil {
+			return err
+		}
+		if err = fn(msg); err != nil {
+			return err
+		}
+	}
+}
+
 // ReadMessage is used to read the next message in the internal reader.
 //
 // If the reader is empty (or at io.EOF), io.EOF is returned with an empty
@@ -57,7 +72,10 @@ func (r *Reader) ReadMessage() (*Message, error) {
 				break
 			}
 			if bytes.Equal(p, []byte("\nMSH")) {
-				r.reader.ReadByte() // Get rid of the LF
+				// Get rid of the LF
+				if _, err = r.reader.ReadByte(); err != nil {
+					return nil, err
+				}
 				break
 			}
 		}

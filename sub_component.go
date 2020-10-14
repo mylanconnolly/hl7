@@ -3,7 +3,6 @@ package hl7
 import (
 	"errors"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -16,11 +15,6 @@ var ErrUnknownTimeFormat = errors.New("unknown time format")
 // compliant, since not all fields have sub-components but it is close enough.
 type SubComponent []byte
 
-// MarshalHL7 is used to conver the SubComponent back into an HL7 format.
-func (s SubComponent) MarshalHL7() []byte {
-	return s
-}
-
 // Int is used to return an integer value housed in a SubComponent.
 func (s SubComponent) Int() (int, error) {
 	return strconv.Atoi(string(s))
@@ -29,25 +23,7 @@ func (s SubComponent) Int() (int, error) {
 // String is used to return the string value housed in a SubComponent. We
 // convert HL7 escape codes, linebreaks, etc. into standard values.
 func (s SubComponent) String() string {
-	out := strings.NewReplacer(
-		`\H\`, "",
-		`\N\`, "",
-		`\.fi\`, "",
-		`\.nf\`, "",
-		`\F\`, "|",
-		`\S\`, "^",
-		`\T\`, "&",
-		`\R\`, "~",
-		`\E\`, `\`,
-		`\.br\`, "\n",
-		`\.ce\`, "\n",
-	).Replace(string(s))
-
-	// TODO: Implement replacers for .sp, .in, .ti, and .sk. See
-	// https://www.hermetechnz.com/documentation/UltraPort/MSSQL/index.html?hl7_escape_rules.htm
-	// for details. Should we use regex? Or a parser?
-
-	return out
+	return FormatString(string(s))
 }
 
 // DirtyString is the string value value without any escaping performed.

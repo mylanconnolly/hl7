@@ -26,22 +26,9 @@ func main() {
 	defer file.Close()
 
 	reader := hl7.NewReader(file)
-	i := 0
 
-	for {
-		i++
-		msg, err := reader.ReadMessage()
-
-		if err != nil {
-			break
-		}
-		for {
-			_, err = msg.ReadSegment()
-
-			if err != nil {
-				break
-			}
-			fmt.Println("Found segment!")
-		}
-	}
+	reader.EachMessage(func(msg *hl7.Message) error {
+		fmt.Println("Found a message!")
+		return nil
+	})
 }

@@ -3,19 +3,6 @@ package hl7
 // Segment is a slice of fields.
 type Segment []Fields
 
-// MarshalHL7 is used to convert the segment back into HL7 format.
-func (s Segment) MarshalHL7() []byte {
-	buf := []byte{}
-
-	for i, f := range s {
-		if i > 0 {
-			buf = append(buf, fieldSep)
-		}
-		buf = append(buf, f.MarshalHL7()...)
-	}
-	return buf
-}
-
 // Type is used to return the type of segment this is.
 func (s Segment) Type() string {
 	if subComp, ok := s.GetSubComponent(0, 0, 0, 0); ok {
