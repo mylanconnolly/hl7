@@ -5,6 +5,8 @@ import (
 	"errors"
 	"testing"
 	"testing/iotest"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestReaderReadMessage(t *testing.T) {
@@ -32,16 +34,11 @@ func TestReaderReadMessage(t *testing.T) {
 
 			for i := 0; i < tt.count; i++ {
 				_, err := reader.ReadMessage()
-
-				if err != nil {
-					t.Fatalf("Got error `%#v` while reading message %d, want: nil", err, i+1)
-				}
+				assert.Nil(t, err)
 			}
+
 			_, err := reader.ReadMessage()
-
-			if err == nil {
-				t.Fatal("Did not get error reading message, expected io.EOF")
-			}
+			assert.Error(t, err)
 		})
 	}
 
@@ -49,10 +46,7 @@ func TestReaderReadMessage(t *testing.T) {
 		buf := bytes.NewBufferString("MSH|....")
 		reader := NewReader(iotest.TimeoutReader(buf))
 		_, err := reader.ReadMessage()
-
-		if err == nil {
-			t.Fatal("Did not get error")
-		}
+		assert.Error(t, err)
 	})
 }
 
@@ -85,12 +79,8 @@ func TestReaderEachMessage(t *testing.T) {
 				return nil
 			})
 
-			if i != tt.count {
-				t.Fatalf("Got unexpected number of messages (%d), wanted %d", i, tt.count)
-			}
-			if err != nil {
-				t.Fatalf("Got error reading messages: %v", err)
-			}
+			assert.Equal(t, tt.count, i)
+			assert.Nil(t, err)
 		})
 	}
 
@@ -102,9 +92,7 @@ func TestReaderEachMessage(t *testing.T) {
 			return nil
 		})
 
-		if err == nil {
-			t.Fatal("Did not get error")
-		}
+		assert.Error(t, err)
 	})
 
 	t.Run("error is propagated", func(t *testing.T) {
@@ -115,8 +103,6 @@ func TestReaderEachMessage(t *testing.T) {
 			return errors.New("foo")
 		})
 
-		if err == nil {
-			t.Fatal("Did not get error")
-		}
+		assert.Error(t, err)
 	})
 }

@@ -1,9 +1,10 @@
 package hl7
 
 import (
-	"reflect"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewSubComponent(t *testing.T) {
@@ -20,10 +21,7 @@ func TestNewSubComponent(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := newSubComponent(tt.escape, tt.data)
-
-			if !reflect.DeepEqual(tt.want, got) {
-				t.Fatalf("Got: %#v, want: %#v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
@@ -44,15 +42,13 @@ func TestSubComponentInt(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.value.Int()
 
-			if tt.wantErr && err == nil {
-				t.Fatal("Wanted error, got nil")
+			if tt.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.Nil(t, err)
 			}
-			if !tt.wantErr && err != nil {
-				t.Fatalf("Don't want error, got: %v", err)
-			}
-			if tt.want != got {
-				t.Fatalf("Want: %d, got: %d", tt.want, got)
-			}
+
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
@@ -71,10 +67,7 @@ func TestSubComponentDirtyString(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.value.DirtyString()
-
-			if tt.want != got {
-				t.Fatalf("Want: %s, got: %s", tt.want, got)
-			}
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
@@ -101,15 +94,13 @@ func TestSubComponentTime(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.value.Time()
 
-			if tt.wantErr && err == nil {
-				t.Fatal("Wanted error, got nil")
+			if tt.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.Nil(t, err)
 			}
-			if !tt.wantErr && err != nil {
-				t.Fatalf("Don't want error, got: %v", err)
-			}
-			if !reflect.DeepEqual(tt.want, got) {
-				t.Fatalf("Want: %#v, got: %#v", tt.want.Format("2006-01-02 15:04:05.000000000"), got.Format("2006-01-02 15:04:05.000000000"))
-			}
+
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }

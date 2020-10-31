@@ -1,8 +1,9 @@
 package hl7
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewField(t *testing.T) {
@@ -23,10 +24,7 @@ func TestNewField(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := newField(tt.compSep, tt.subCompSep, tt.escape, tt.data)
-
-			if !reflect.DeepEqual(tt.want, got) {
-				t.Fatalf("Got: %#v, want: %#v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }

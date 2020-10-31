@@ -1,6 +1,10 @@
 package hl7
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestFormatString(t *testing.T) {
 	tests := []struct {
@@ -29,10 +33,7 @@ func TestFormatString(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := FormatString(tt.input)
-
-			if got != tt.want {
-				t.Fatalf("Got: %#v, want: %#v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
@@ -51,10 +52,7 @@ func TestParseRepetition(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := parseRepetition(tt.num, tt.repeat)
-
-			if got != tt.want {
-				t.Fatalf("Got: %#v, want: %#v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
