@@ -18,6 +18,7 @@ const (
 
 // Message is used to describe the parsed message.
 type Message struct {
+	segments   map[string][]Segment
 	reader     *bufio.Reader
 	lock       sync.Mutex
 	fieldSep   byte
@@ -25,6 +26,27 @@ type Message struct {
 	subCompSep byte
 	repeat     byte
 	escape     byte
+}
+
+// Parse is used to parse the segments within the message so that they can be
+// queried and iterated. This is a different paradigm from the ReadSegment
+// method, which parses the segments as-needed.
+func (m *Message) Parse() error {
+	m.segments = map[string][]Segment{}
+
+	for {
+		segment, err := m.ReadSegment()
+
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			return err
+		}
+
+		stype := segment.Type()
+		m.segments[stype] = append(m.segments[stype], segment)
+	}
+	return nil
 }
 
 // ReadSegment is used to "read" the next segment from the message.
