@@ -3,11 +3,12 @@
 ![Test](https://github.com/mylanconnolly/hl7/workflows/Test/badge.svg)
 
 This is a basic HL7 parser written in Go. There are no external dependencies,
-only the standard library is used (except for tests, where
-`github.com/testify/assert` is used).
+only the standard library is used for runtime code (`github.com/testify/assert`
+is used in tests to make them easier to reason about).
 
 This parser accepts an `io.Reader` as the input, so anything that follows that
-interface should be usable here.
+interface should be usable here, such as files and TCP streams. Note that this
+does not currently support MLLP.
 
 This library is tested to work on the following platforms:
 
@@ -55,3 +56,4 @@ schedule:
 - [ ] Some validation of the input data (this isn't likely; it means this
       program will need to know a lot about HL7 and I might not have time to
       implement it correctly).
+- [ ] MLLP

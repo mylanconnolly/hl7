@@ -5,6 +5,15 @@ import (
 	"bytes"
 	"io"
 	"sync"
+	"unicode"
+)
+
+// Constants describing possible message boundaries.
+const (
+	CR = '\r'   // Carriage return
+	LF = '\n'   // Line feed
+	FF = '\f'   // Form feed
+	NB = '\x00' // Null byte
 )
 
 // Message is used to describe the parsed message.
@@ -30,17 +39,21 @@ func (m *Message) ReadSegment() (Segment, error) {
 		if err == io.EOF {
 			break
 		}
+
 		// Skip all line feeds and character returns while we haven't started saving
 		// bytes to the byte slice. This helps cope with messages that have a lot of
 		// extra whitespace in them.
-		if len(buf) == 0 && (b == CR || b == LF) {
+		if len(buf) == 0 && unicode.IsSpace(rune(b)) {
 			continue
 		}
+
 		if b == CR || b == LF {
 			break
 		}
+
 		buf = append(buf, b)
 	}
+
 	m.lock.Unlock()
 
 	if len(buf) == 0 {

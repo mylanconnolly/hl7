@@ -5,14 +5,7 @@ import (
 	"bytes"
 	"io"
 	"sync"
-)
-
-// Constants describing possible message boundaries.
-const (
-	CR = '\r'
-	LF = '\n'
-	FF = '\f'
-	NB = '\x00'
+	"unicode"
 )
 
 // Reader is the type used to read messages from an internal bufio.Reader.
@@ -74,7 +67,7 @@ func (r *Reader) readMessage() (*Message, error) {
 		// Multiple messages within a file can be delimited a variety of ways. This
 		// attempts to find all of the different ways I have encountered personally
 		// so far.
-		if b == CR || b == FF || b == LF || b == NB {
+		if unicode.IsSpace(rune(b)) {
 			// "Peek" ahead to the next four bytes. The difference between this and
 			// reading is that the four bytes will still be in the buffer after we
 			// peek, whereas reading consumes them. This allows us to look ahead at

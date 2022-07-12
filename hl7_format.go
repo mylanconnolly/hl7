@@ -13,6 +13,10 @@ var (
 	inRegexp = regexp.MustCompile(`\\.in(\d*)\\`)
 )
 
+// FormatString is used to perform basic HL7 formatting rules on the string.
+// This function does not aim to have 100% coverage of the HL7 formatted text
+// spec since a lot of those rules do not seem to be widely used. This does aim
+// to address the common and easy cases, though.
 func FormatString(str string) string {
 	// These are simple 1:1 replacement patterns, so we don't need to utilize
 	// regular expressions here.
@@ -53,7 +57,9 @@ func formatSp(str string) string {
 }
 
 // Replace \.sk(\d*)\ patterns. This is defined as just skipping a number of
-// spaces to the right.
+// spaces to the right. There are a few formatting rules that have very similar
+// behavior, so we accept a regular expression as an argument, which allows us
+// to make this function reusable.
 func formatSkipSpaces(re *regexp.Regexp, str string) string {
 	return re.ReplaceAllStringFunc(str, func(str string) string {
 		match := str[4 : len(str)-1]
