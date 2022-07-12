@@ -12,10 +12,10 @@ does not currently support MLLP.
 
 This library is tested to work on the following platforms:
 
-- Go versions 1.15.x and 1.14.x
-- Latest version of macOS
-- Latest version of Windows
-- Latest version of Ubuntu
+- Go versions 1.16.x, 1.17.x, and 1.18.x
+- Latest version of macOS (AMD64)
+- Latest version of Windows (AMD64)
+- Latest version of Ubuntu (AMD64)
 
 It should probably work without issue in older versions of Go and operating
 systems since we are not utilizing any low-level features or anything
